@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Junior - Chatbot</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #chatbox {
+      width: 420px;
+      height: 450px;
+      border-radius: 15px;
+      padding: 15px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      margin-bottom: 15px;
+      scrollbar-width: thin;
+    }
+    .message {
+      margin: 8px 0;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 75%;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .user {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: #fff;
+      margin-left: auto;
+      text-align: right;
+      box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
+    }
+    .bot {
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      margin-right: auto;
+      text-align: left;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    #input-area {
+      display: flex;
+      width: 420px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    #user-input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px 0 0 12px;
+      outline: none;
+      font-size: 15px;
+      background: transparent;
+      color: #fff;
+    }
+    #user-input::placeholder {
+      color: #eee;
+    }
+    #send-btn {
+      padding: 0 20px;
+      border: none;
+      background: linear-gradient(135deg, #00c6ff, #007bff);
+      color: white;
+      font-weight: bold;
+      border-radius: 0 12px 12px 0;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #send-btn:hover {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Junior - Your AI Assistant</h1>
+  <div id="chatbox"></div>
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button id="send-btn">Send</button>
+  </div>
+
+  <script>
+    const OPENROUTER_KEY = "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"; // Replace with your key
+    const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    let conversation = [];
+    
+function addMessage(sender, text) {
+    const message = document.createElement("div");
+    message.classList.add("message", sender);
+    // Preserve formatting with line breaks
+    message.innerHTML = text.replace(/\n/g, "<br>");
+    chatbox.appendChild(message);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      conversation.push({ role: "user", content: text });
+      userInput.value = "";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${OPENROUTER_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "openai/gpt-3.5-turbo",
+            messages: conversation
+          })
+        });
+
+        const data = await response.json();
+        const botReply = data.choices?.[0]?.message?.content || "⚠️ No response from AI";
+
+        addMessage("bot", botReply);
+        conversation.push({ role: "assistant", content: botReply });
+
+      } catch (error) {
+        addMessage("bot", "⚠️ Error: " + error.message);
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
