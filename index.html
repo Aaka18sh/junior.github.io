@@ -1,165 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Junior - Chatbot</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      color: #fff;
-    }
-    h1 {
-      margin-bottom: 20px;
-      font-size: 28px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    #chatbox {
-      width: 420px;
-      height: 450px;
-      border-radius: 15px;
-      padding: 15px;
-      overflow-y: auto;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-      margin-bottom: 15px;
-      scrollbar-width: thin;
-    }
-    .message {
-      margin: 8px 0;
-      padding: 10px 14px;
-      border-radius: 12px;
-      max-width: 75%;
-      line-height: 1.4;
-      word-wrap: break-word;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    .user {
-      background: linear-gradient(135deg, #007bff, #00c6ff);
-      color: #fff;
-      margin-left: auto;
-      text-align: right;
-      box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
-    }
-    .bot {
-      background: rgba(255, 255, 255, 0.8);
-      color: #333;
-      margin-right: auto;
-      text-align: left;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-    #input-area {
-      display: flex;
-      width: 420px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    #user-input {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 12px 0 0 12px;
-      outline: none;
-      font-size: 15px;
-      background: transparent;
-      color: #fff;
-    }
-    #user-input::placeholder {
-      color: #eee;
-    }
-    #send-btn {
-      padding: 0 20px;
-      border: none;
-      background: linear-gradient(135deg, #00c6ff, #007bff);
-      color: white;
-      font-weight: bold;
-      border-radius: 0 12px 12px 0;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    #send-btn:hover {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junior - Multi-Model AI</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* This prevents the main page scrollbar */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Base styles for light mode */
+        :root {
+            --bg-color: #f3f4f6;
+            --container-bg: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --input-border: #d1d5db;
+            --tab-bg: #f9fafb;
+            --tab-active-bg: #e5e7eb;
+            --tab-hover-bg: #f0f0f0;
+        }
+        /* Styles for dark mode */
+        body.dark {
+            --bg-color: #1a202c;
+            --container-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --card-bg: #222b3a;
+            --input-border: #4a5568;
+            --tab-bg: #1f2937;
+            --tab-active-bg: #4a5568;
+            --tab-hover-bg: #3a455a;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .main-container {
+            background-color: var(--container-bg);
+        }
+        .input-area textarea {
+            background-color: transparent;
+            border-color: var(--input-border);
+        }
+        .result-card {
+            background-color: var(--card-bg);
+        }
+        .tab-btn {
+            background-color: var(--tab-bg);
+            color: var(--text-color);
+            border-left-color: transparent;
+        }
+        .tab-btn:hover {
+            background-color: var(--tab-hover-bg);
+        }
+
+        /* Active tab button styling */
+        .tab-btn.active {
+            font-weight: 600;
+            background-color: var(--tab-active-bg);
+        }
+
+        /* Custom styles for the color-coded borders on the tabs and results */
+        #tab-junior.active {
+            border-left-color: #4a90e2; /* Light Blue for Junior */
+        }
+        #content-junior .result-card {
+            border-left-color: #4a90e2;
+        }
+
+        #tab-model-a.active {
+            border-left-color: #ff5252; /* Red for Model A */
+        }
+        #content-model-a .result-card {
+            border-left-color: #ff5252;
+        }
+
+        #tab-model-b.active {
+            border-left-color: #8bc34a; /* Green for Model B */
+        }
+        #content-model-b .result-card {
+            border-left-color: #8bc34a;
+        }
+        
+        /* Chat-specific styles for the new UI */
+        .chatbox {
+            /* The key change: fixed height with vertical scrolling */
+            height: 60vh;
+            overflow-y: auto;
+            
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .user {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: #fff;
+            margin-left: auto;
+            text-align: right;
+            box-shadow: 3px 3px 10px rgba(0, 123, 255, 0.4);
+        }
+        .bot {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            margin-right: auto;
+            text-align: left;
+            box-shadow: -3px 3px 10px rgba(0,0,0,0.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-message {
+            color: #888;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
 </head>
-<body>
-  <h1>🤖 Junior - Your AI Assistant</h1>
-  <div id="chatbox"></div>
-  <div id="input-area">
-    <input type="text" id="user-input" placeholder="Type your message..." />
-    <button id="send-btn">Send</button>
-  </div>
+<body class="min-h-screen flex flex-col items-center">
+    <!-- Main Application Container -->
+    <div class="main-container w-screen h-screen relative flex flex-col md:p-10 p-6">
 
-  <script>
-    const OPENROUTER_KEY = "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"; // Replace with your key
-    const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="absolute top-4 right-4 p-2 rounded-full shadow-md transition-transform duration-200 hover:scale-105">
+            <svg id="sun-icon" class="h-6 w-6 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                <path d="M10 2a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 0110 2zm5.353 3.354a.5.5 0 00-.707 0l-1.414 1.414a.5.5 0 00.707.707l1.414-1.414a.5.5 0 000-.707zM18 10a.5.5 0 01-.5.5h-2a.5.5 0 010-1h2A.5.5 0 0118 10zM10 15a.5.5 0 01-.5-.5v-2a.5.5 0 011 0v2a.5.5 0 01-.5.5zm-5.353 1.646a.5.5 0 00.707 0l1.414-1.414a.5.5 0 00-.707-.707L4.647 15.646a.5.5 0 000 .707zM2 10a.5.5 0 01.5-.5h2a.5.5 0 010 1h-2A.5.5 0 012 10zm3.353-3.354a.5.5 0 00-.707.707L4.647 15.646a.5.5 0 000-.707z"></path>
+            </svg>
+            <svg id="moon-icon" class="h-6 w-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293a1 1 0 01-1.414 0L14.5 11.414l-1.414 1.414a1 1 0 01-1.414-1.414l1.414-1.414L11.5 8.5a1 1 0 011.414-1.414l1.414 1.414L14.5 7.586a1 1 0 011.414 0l1.414 1.414L17.5 10.5a1 1 0 010 1.414l-1.414 1.414zM10 3a7 7 0 00-7 7c0 3.193 2.585 5.78 5.778 5.996C10.74 15.98 12.3 15.118 13.5 13.793 14.793 12.42 15.932 10.74 16.5 9.176 16.5 5.5 13.5 2.5 10 2.5z"></path>
+            </svg>
+        </button>
 
-    const chatbox = document.getElementById("chatbox");
-    const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
+        <h1 class="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-700 drop-shadow-md">Junior</h1>
 
-    let conversation = [];
-    
-function addMessage(sender, text) {
-    const message = document.createElement("div");
-    message.classList.add("message", sender);
-    // Preserve formatting with line breaks
-    message.innerHTML = text.replace(/\n/g, "<br>");
-    chatbox.appendChild(message);
-    chatbox.scrollTop = chatbox.scrollHeight;
-  }
+        <!-- Main Content Area with two columns -->
+        <div class="flex flex-col lg:flex-row gap-8 flex-grow h-full">
 
-    async function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
+            <!-- Left Sidebar for AI Tools (Tabs) -->
+            <div class="w-full lg:w-1/4 rounded-xl p-4 flex flex-col items-start lg:h-auto">
+                <h2 class="text-xl font-semibold mb-4">AI Tools</h2>
+                <div class="w-full flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-hidden pb-4 lg:pb-0">
+                    <button id="tab-junior" class="tab-btn active w-full text-left px-4 py-3 rounded-lg border-l-4 border-l-transparent transition-all duration-200 focus:outline-none">
+                        Junior
+                    </button>
+                    <button id="tab-model-a" class="tab-btn w-full text-left px-4 py-3 rounded-lg border-l-4 border-l-transparent transition-all duration-200 focus:outline-none">
+                        Model A
+                    </button>
+                    <button id="tab-model-b" class="tab-btn w-full text-left px-4 py-3 rounded-lg border-l-4 border-l-transparent transition-all duration-200 focus:outline-none">
+                        Model B
+                    </button>
+                </div>
+                <!-- Shortcut key information -->
+                <div class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+                    <p class="font-medium">Keyboard Shortcuts:</p>
+                    <ul class="list-disc list-inside mt-1">
+                        <li>**Ctrl + →**: Next Tab</li>
+                        <li>**Ctrl + ←**: Previous Tab</li>
+                    </ul>
+                </div>
+            </div>
 
-      addMessage("user", text);
-      conversation.push({ role: "user", content: text });
-      userInput.value = "";
+            <!-- Right Content Area for Input and Results -->
+            <div class="w-full lg:w-3/4 flex flex-col h-full">
 
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${OPENROUTER_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: "openai/gpt-3.5-turbo",
-            messages: conversation
-          })
+                <!-- AI Results Display -->
+                <div id="tab-content-container" class="mt-4 flex flex-col flex-grow">
+                    <!-- Junior AI Content Tab -->
+                    <div id="content-junior" class="tab-content flex-grow flex flex-col">
+                        <div id="junior-chatbox" class="chatbox result-card border-l-4">
+                            <!-- Chat messages will be appended here -->
+                        </div>
+                    </div>
+
+                    <!-- Model A AI Content Tab -->
+                    <div id="content-model-a" class="tab-content flex-grow flex flex-col hidden">
+                        <div id="model-a-chatbox" class="chatbox result-card border-l-4">
+                            <!-- Chat messages will be appended here -->
+                        </div>
+                    </div>
+
+                    <!-- Model B AI Content Tab -->
+                    <div id="content-model-b" class="tab-content flex-grow flex flex-col hidden">
+                        <div id="model-b-chatbox" class="chatbox result-card border-l-4">
+                            <!-- Chat messages will be appended here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Input Area with button inside -->
+                <div class="mt-6 input-area relative">
+                    <textarea id="prompt-input" rows="4" class="w-full p-4 pr-24 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 resize-none" placeholder="Enter your prompt here..."></textarea>
+                    <button id="generate-btn" class="absolute bottom-4 right-4 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200">
+                        Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get all necessary DOM elements
+        const promptInput = document.getElementById('prompt-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        // This is the URL for the backend worker. You can replace this with your own URL.
+        const API_URL = "https://empty-dawn-fba7.ar804740.workers.dev/";
+
+        // A map to easily access the output elements by model ID
+        const chatboxes = {
+            'junior': document.getElementById('junior-chatbox'),
+            'model-a': document.getElementById('model-a-chatbox'),
+            'model-b': document.getElementById('model-b-chatbox')
+        };
+        
+        // A conversation history for each model
+        let conversationHistories = {
+            'junior': [],
+            'model-a': [],
+            'model-b': []
+        };
+        let activeTab = 'junior';
+
+        /**
+         * Adds a message to the chatbox and scrolls to the bottom.
+         * @param {string} sender 'user' or 'bot'.
+         * @param {string} text The message content.
+         * @param {string} modelId The ID of the model's chatbox.
+         */
+        function addMessage(sender, text, modelId) {
+            const message = document.createElement("div");
+            message.classList.add("message", sender);
+            message.innerHTML = text.replace(/\n/g, "<br>");
+            chatboxes[modelId].appendChild(message);
+            chatboxes[modelId].scrollTop = chatboxes[modelId].scrollHeight;
+        }
+        
+        /**
+         * Sends a prompt to the specified AI model via the API.
+         * @param {string} modelId The ID of the model to call (e.g., 'junior', 'model-a').
+         * @param {string} prompt The user's input prompt.
+         */
+        async function getModelResponse(modelId, prompt) {
+            // Add user message to the conversation and the UI
+            conversationHistories[modelId].push({ role: "user", content: prompt });
+            addMessage("user", prompt, modelId);
+
+            // Add a loading message to the UI
+            const loadingMessage = document.createElement("div");
+            loadingMessage.classList.add("loading-message");
+            loadingMessage.textContent = "Loading...";
+            chatboxes[modelId].appendChild(loadingMessage);
+            chatboxes[modelId].scrollTop = chatboxes[modelId].scrollHeight;
+
+            try {
+                let responseText = "";
+                
+                // Keep the existing logic that calls your backend for all models
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: modelId,
+                        messages: conversationHistories[modelId]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (data.success && data.content) {
+                    responseText = data.content;
+                } else {
+                    throw new Error(`Could not get a response from ${modelId}.`);
+                }
+                
+                // Remove the loading message
+                if(chatboxes[modelId].contains(loadingMessage)) {
+                    chatboxes[modelId].removeChild(loadingMessage);
+                }
+
+                if (responseText) {
+                    conversationHistories[modelId].push({ role: "assistant", content: responseText });
+                    addMessage("bot", responseText, modelId);
+                } else {
+                     addMessage("bot", `⚠️ Error: Could not get a response from ${modelId}.`, modelId);
+                }
+                
+            } catch (error) {
+                console.error(error);
+                // Remove the loading message and add an error message
+                if(chatboxes[modelId].contains(loadingMessage)) {
+                    chatboxes[modelId].removeChild(loadingMessage);
+                }
+                addMessage("bot", `⚠️ Error: ${error.message}`, modelId);
+            }
+        }
+
+        // Initial setup to show the correct content for the active tab
+        function showTab(tabId) {
+            activeTab = tabId;
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Deactivate all tab buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show the selected tab content and activate its button
+            const selectedTab = document.getElementById(`tab-${tabId}`);
+            selectedTab.classList.add('active');
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+        }
+
+        // Add event listeners to tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.id.replace('tab-', '');
+                showTab(tabId);
+            });
         });
 
-        const data = await response.json();
-        const botReply = data.choices?.[0]?.message?.content || "⚠️ No response from AI";
+        // Event listener for the "Generate Results" button
+        generateBtn.addEventListener('click', () => {
+            const userPrompt = promptInput.value.trim();
+            if (!userPrompt) {
+                return; // Do nothing if the prompt is empty
+            }
+            
+            // Call the API for the currently active model
+            getModelResponse(activeTab, userPrompt);
+            
+            // Clear the input field after sending the message
+            promptInput.value = '';
+        });
 
-        addMessage("bot", botReply);
-        conversation.push({ role: "assistant", content: botReply });
+        // Add "Enter" key functionality to trigger the generate button
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevents a new line from being added
+                generateBtn.click();
+            }
+        });
 
-      } catch (error) {
-        addMessage("bot", "⚠️ Error: " + error.message);
-      }
-    }
+        // Add shortcut keys for tab switching
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey) {
+                const tabIds = ['junior', 'model-a', 'model-b'];
+                let currentIndex = tabIds.indexOf(activeTab);
+                let newIndex;
 
-    sendBtn.addEventListener("click", sendMessage);
-    userInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    newIndex = (currentIndex + 1) % tabIds.length;
+                    showTab(tabIds[newIndex]);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    newIndex = (currentIndex - 1 + tabIds.length) % tabIds.length;
+                    showTab(tabIds[newIndex]);
+                }
+            }
+        });
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcons(isDark);
+        }
+
+        function updateThemeIcons(isDark) {
+            if (isDark) {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        // Apply theme from local storage or set to dark by default
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+                updateThemeIcons(true);
+            } else if (savedTheme === 'light') {
+                updateThemeIcons(false);
+            } else {
+                // Default to dark mode if no preference is found
+                document.body.classList.add('dark');
+                updateThemeIcons(true);
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Add event listener to the theme toggle button
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Call functions on initial load
+        applySavedTheme();
+        showTab('junior');
+    </script>
 </body>
 </html>
